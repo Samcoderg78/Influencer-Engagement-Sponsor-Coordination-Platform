@@ -1,67 +1,85 @@
 # Influencer Engagement & Sponsor Coordination Platform
 
-A Flask-based web application for managing influencer campaigns, sponsorship requests, roles, messaging, and campaign administration. The system supports sponsors, influencers, admin moderation, and background task processing with Celery and Redis.
+A full-stack web platform that connects sponsors with influencers. Sponsors create campaigns and send sponsorship requests, influencers browse and respond to them, and admins moderate accounts across the platform.
 
-## Overview
+**Tech stack:** React · Flask · SQLAlchemy · REST APIs · JWT · Celery · Redis · Flask-Caching
 
-This platform enables:
+---
 
-- Sponsors to create and manage public or private campaigns
-- Influencers to browse campaign opportunities and respond to requests
-- Admin review and approval of user accounts
-- Messaging between sponsors and influencers
-- CSV export of campaign data
-- Background email/task processing using Celery
+## Features
 
-The project is implemented primarily in Python and uses a Flask app structure with SQLAlchemy, JWT authentication, Flask-Login, and a SQLite database by default.
+### Three user roles
+| Role | What they can do |
+|---|---|
+| **Admin** | Moderate accounts, oversee campaigns and platform activity |
+| **Sponsor** | Create and manage campaigns, send sponsorship requests to influencers, message influencers |
+| **Influencer** | Browse campaigns, receive and respond to sponsorship requests, message sponsors |
 
-## Tech Stack
+### Core functionality
+- **Campaign management:** sponsors create and manage campaigns
+- **Sponsorship requests:** request and response workflow between sponsors and influencers
+- **Messaging:** communication between sponsors and influencers
+- **Account moderation:** admin controls over user accounts
+- **Secure, role-based access:** JWT authentication with role-based authorization
+- **Background processing:** Celery workers with Redis for tasks that shouldn't block a request `[TODO: name the tasks, e.g. scheduled reminders, report exports]`
+- **Caching:** Flask-Caching for faster responses on frequently requested data
 
-- Python 3.12
-- Flask
-- Flask-SQLAlchemy
-- Flask-Login
-- Flask-JWT-Extended
-- Flask-Migrate
-- Flask-Caching
-- Flask-Mail
-- Celery
-- Redis
-- SQLite
-- HTML templates
-- Bootstrap-like frontend integration via templates
+---
 
-## Repository Structure
+## Architecture
 
-```text
-Influencer-Engagement-Sponsor-Coordination-Platform/
-├── Project_code/
-│   └── iescp/
-│       ├── app/
-│       │   ├── __init__.py
-│       │   ├── forms.py
-│       │   ├── models.py
-│       │   ├── tasks.py
-│       │   ├── routes/
-│       │   │   ├── __init__.py
-│       │   │   ├── admin.py
-│       │   │   ├── ad_requests.py
-│       │   │   ├── auth.py
-│       │   │   ├── campaigns.py
-│       │   │   ├── influencer.py
-│       │   │   ├── main.py
-│       │   │   └── sponsor.py
-│       │   ├── templates/
-│       │   └── utils/
-│       │       ├── celery_task.py
-│       │       ├── celery_worker.py
-│       │       ├── decorators.py
-│       │       ├── email_templates.py
-│       │       └── mail_hog.py
-│       ├── config.py
-│       ├── run.py
-│       ├── req.txt
-│       ├── migrations/
-│       ├── exports/
-│       ├── instance/
-│       └── venv/
+```
+React frontend  ──REST APIs (JSON + JWT)──►  Flask backend  ──SQLAlchemy──►  Database
+                                                  │
+                                                  ├── Redis (cache + Celery broker)
+                                                  └── Celery workers (background tasks)
+```
+
+---
+
+## Getting started
+
+### Prerequisites
+- Python 3.8+
+- Node.js and npm
+- Redis running locally
+
+### Backend
+```bash
+cd backend
+pip install -r requirements.txt
+python run.py
+```
+
+### Frontend
+```bash
+cd frontend
+npm install
+npm start
+```
+
+---
+
+## API overview
+
+
+| Method | Endpoint | Description | Access |
+|---|---|---|---|
+| POST | `/api/login` | Log in and receive a JWT | Public |
+| GET | `/api/campaigns` | List campaigns | Authenticated |
+| POST | `/api/campaigns` | Create a campaign | Sponsor |
+
+---
+
+## What I learned
+
+- Designing role-based access control across three user types
+- Building a REST API with JWT authentication and connecting it to a React frontend
+- Moving slow work into Celery and Redis so requests stay fast
+- Using caching to reduce repeated database queries
+
+---
+
+## Author
+
+**Saurabh Yadav**: [GitHub](https://github.com/Samcoderg78) · [LinkedIn](https://linkedin.com/in/saurabh-yadav-6zd)
